@@ -37,12 +37,25 @@ class StrongType : Mixins... {
 public:
   StrongType() = default;
   explicit StrongType(T value) : value_(value) {}
+  StrongType(const StrongType&) = default;
+  StrongType& operator=(const StrongType&) = default;
+  StrongType(StrongType&&) = default;
+  StrongType& operator=(StrongType&&) = default;
 
-  T get() { return value_; }
+  // library-grade accessor set:
+  // - expose reference views (so that working with the type is truly zero cost)
+  // - const/non-const lvalue/rvalue
+  // - const rvalue makes no semantic sense, so must define the following
+  // triplet
+  T& get() & { return value_; }
+  const T& get() const& { return value_; }
+  T&& get() && { return std::move(value_); }
 
 private:
   T value_;
 };
+
+// NOTE: Mixins must have zero size to enable EBO on StrongType
 
 struct Addable {
   template <typename T,
