@@ -23,6 +23,7 @@
 // 2) mixins for common behaviour
 // 3) forwarding special member functions correctly for ergonomic usage
 
+#include <iostream>
 #include <type_traits>
 #include <utility>
 
@@ -44,7 +45,9 @@ private:
 };
 
 struct Addable {
-  template <typename T>
+  template <typename T,
+            typename = std::void_t<decltype(std::declval<T>().get() +
+                                            std::declval<T>().get())>>
   friend T operator+(T a, T b) {
     return T{a.get() + b.get()};
   }
@@ -54,5 +57,13 @@ struct Subtractable {
   template <typename T>
   friend T operator-(T a, T b) {
     return T{a.get() - b.get()};
+  }
+};
+
+struct Ostreamable {
+  template <typename T>
+  friend std::ostream& operator<<(std::ostream& out, T value) {
+    out << value.get();
+    return out;
   }
 };
