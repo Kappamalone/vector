@@ -32,8 +32,20 @@
 // Inheritance is nice, but there are many types we can't inherit from that
 // aren't just in-built types The alternative to inheritance is composition.
 
+template <typename... Ts>
+struct PreCpp17MixinsAreEmpty : std::true_type {
+};
+
+template <typename T, typename... Ts>
+struct PreCpp17MixinsAreEmpty<T, Ts...> {
+  static constexpr bool value = std::is_empty_v<T> && PreCpp17MixinsAreEmpty<Ts...>::value;
+};
+
 template <typename T, typename U, typename... Mixins>
 class StrongType : Mixins... {
+  // static_assert((std::is_empty_v<Mixins> && ...));
+  static_assert(PreCpp17MixinsAreEmpty<Mixins...>::value);
+
 public:
   StrongType() = default;
   explicit StrongType(T value) : value_(value) {}
@@ -59,9 +71,9 @@ private:
 
 struct Addable {
   template <typename T,
-            typename = std::void_t<decltype(std::declval<T>().get() +
-                                            std::declval<T>().get())>>
-  friend T operator+(T a, T b) {
+            typename = std::void_t<decltype(T{std::declval<T>().get() +
+                                              std::declval<T>().get()})>>
+  friend T operator+(const T & a, const T & b) {
     return T{a.get() + b.get()};
   }
 };
