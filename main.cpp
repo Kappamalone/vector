@@ -1,4 +1,5 @@
 #include "simple_logger.h"
+#include "strong_types.h"
 #include "vector.h"
 #include <iostream>
 
@@ -27,17 +28,52 @@ public:
     return *this;
   }
 
-  ~ObjectPrinter() {
-    LOG_DEBUG(id_, ": DTOR");
-  }
+  ~ObjectPrinter() { LOG_DEBUG(id_, ": DTOR"); }
 
 private:
   size_t id_;
 };
 
+/*
+class Cat {
+public:
+  void speak() { std::cout << "meow\n"; }
+};
+
+using StrongCatVoid = StrongType<Cat, void>;
+using StrongCatInt = StrongType<Cat, int>;
+
+void cat_func(StrongCatVoid s) {
+  s.speak();
+}
+*/
+
+struct ATag {};
+using A = StrongType<int, ATag, Addable>;
+struct BTag {};
+using B = StrongType<int, BTag, Addable>;
+
+void arithmetic_with_a(A first, A second) {
+  std::cout << first + second << "\n";
+}
+
 int main() {
-  std::cout << "hello world\n";
+  /*
   Vector<ObjectPrinter> victim;
   victim.push_back(ObjectPrinter{});
-  victim.push_back(ObjectPrinter{});
+  victim.push_back(bjectPrinter{});
+
+  int* ptr = nullptr;
+  std::cout << "about to crash..." << std::endl;
+  *ptr = 42;
+  */
+
+  std::cout << "hello world\n";
+
+  // cat_func(StrongCatVoid{});
+  // cat_func(StrongCatInt{}); // doesn't compile
+
+  arithmetic_with_a(A{1}, A{2});
+
+
 }
