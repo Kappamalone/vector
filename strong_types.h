@@ -47,7 +47,7 @@ class StrongType : Mixins... {
   static_assert(PreCpp17MixinsAreEmpty<Mixins...>::value);
 
 public:
-  StrongType() = default;
+  StrongType() = delete;
   explicit StrongType(T value) : value_(value) {}
   StrongType(const StrongType&) = default;
   StrongType& operator=(const StrongType&) = default;
