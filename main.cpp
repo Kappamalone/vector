@@ -49,12 +49,16 @@ void cat_func(StrongCatVoid s) {
 */
 
 struct ATag {};
-using A = StrongType<int, ATag, Addable>;
+using A = StrongType<int, ATag, Add, Subtract>;
 struct BTag {};
-using B = StrongType<int, BTag, Addable>;
+using B = StrongType<int, BTag, Add, Subtract>;
 
 void arithmetic_with_a(A first, A second) {
-  std::cout << first + second << "\n";
+  A third = first + second;
+  std::cout << third.get() << "\n";
+
+  A fourth = second - first;
+  std::cout << fourth.get() << "\n";
 }
 
 int main() {

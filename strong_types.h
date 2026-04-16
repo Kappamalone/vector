@@ -31,15 +31,8 @@
 // Inheritance is nice, but there are many types we can't inherit from that
 // aren't just in-built types The alternative to inheritance is composition.
 
-struct Addable {
-  template <typename T>
-  friend decltype(std::declval<T>().get()) operator+(T a, T b) {
-    return a.get() + b.get();
-  }
-};
-
-template <typename T, typename U, typename Mixin>
-class StrongType : Mixin {
+template <typename T, typename U, typename... Mixins>
+class StrongType : Mixins... {
 public:
   StrongType() = default;
   StrongType(T value) : value_(value) {}
@@ -48,4 +41,18 @@ public:
 
 private:
   T value_;
+};
+
+struct Add {
+  template <typename T>
+  friend T operator+(T a, T b) {
+    return T{a.get() + b.get()};
+  }
+};
+
+struct Subtract {
+  template <typename T>
+  friend T operator-(T a, T b) {
+    return T{a.get() - b.get()};
+  }
 };
