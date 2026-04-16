@@ -47,9 +47,9 @@ public:
   // - const/non-const lvalue/rvalue
   // - const rvalue makes no semantic sense, so must define the following
   // triplet
-  T& get() & { return value_; }
-  const T& get() const& { return value_; }
-  T&& get() && { return std::move(value_); }
+  constexpr T& get() & { return value_; }
+  constexpr const T& get() const& { return value_; }
+  constexpr T&& get() && { return std::move(value_); }
 
 private:
   T value_;
