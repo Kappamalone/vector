@@ -35,7 +35,7 @@ template <typename T, typename U, typename... Mixins>
 class StrongType : Mixins... {
 public:
   StrongType() = default;
-  StrongType(T value) : value_(value) {}
+  explicit StrongType(T value) : value_(value) {}
 
   T get() { return value_; }
 
@@ -43,14 +43,14 @@ private:
   T value_;
 };
 
-struct Add {
+struct Addable {
   template <typename T>
   friend T operator+(T a, T b) {
     return T{a.get() + b.get()};
   }
 };
 
-struct Subtract {
+struct Subtractable {
   template <typename T>
   friend T operator-(T a, T b) {
     return T{a.get() - b.get()};
