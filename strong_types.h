@@ -69,21 +69,22 @@ private:
 
 // NOTE: Mixins must have zero size to enable EBO on StrongType
 
-struct Addable {
-  template <typename T,
-            typename = std::void_t<decltype(T{std::declval<T>().get() +
-                                              std::declval<T>().get()})>>
-  friend T operator+(const T & a, const T & b) {
-    return T{a.get() + b.get()};
-  }
-};
+// little macro lesson:
+// macros do not concatenate tokens unless you explicitly ask, which is where
+// the token pasting operator(##) is useful
 
-struct Subtractable {
-  template <typename T>
-  friend T operator-(T a, T b) {
-    return T{a.get() - b.get()};
-  }
-};
+#define OPERATOR_MIXIN(NAME, OP)                                               \
+  struct NAME {                                                                \
+    template <typename T,                                                      \
+              typename = std::void_t<decltype(T{                               \
+                  std::declval<T>().get() OP std::declval<T>().get()})>>       \
+    friend T operator OP(const T & a, const T & b) {                          \
+      return T{a.get() OP b.get()};                                            \
+    }                                                                          \
+  };
+
+OPERATOR_MIXIN(Addable, +);
+OPERATOR_MIXIN(Subtractable, -);
 
 struct Ostreamable {
   template <typename T>
